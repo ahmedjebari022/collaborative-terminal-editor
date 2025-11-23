@@ -24,13 +24,13 @@ func initModel()tea.Model{
 }
 
 func (m model)Init()tea.Cmd{
-	return nil
+	return m.currentScreen.Init()
 }
 
 
 func (m model)Update(msg tea.Msg)(tea.Model,tea.Cmd){
-	
-	switch msg.(type){
+
+	switch msg := msg.(type){
 		case NavigateToHelpMsg:
 			helpScreen := initHelpmodel()
 			m.previousScreens = append(m.previousScreens, m.currentScreen)
@@ -40,7 +40,14 @@ func (m model)Update(msg tea.Msg)(tea.Model,tea.Cmd){
 			m.previousScreens = append(m.previousScreens, m.currentScreen)
 			m.currentScreen = createFileScreen
 		case NavigateToEditFileMsg:
-			//navigate
+			EditFileScreen := initEditFileModel()
+			m.previousScreens = append(m.previousScreens, m.currentScreen)
+			m.currentScreen = EditFileScreen
+			return m, EditFileScreen.Init()
+		case NavigateToOpenFile:
+			OpenFileScreen := initFileModel(msg.filePath)
+			m.previousScreens = append(m.previousScreens, m.currentScreen)
+			m.currentScreen = OpenFileScreen
 		case NavigateBack:
 			m.currentScreen = m.previousScreens[len(m.previousScreens)-1]
 			m.previousScreens = m.previousScreens[:len(m.previousScreens)-1]

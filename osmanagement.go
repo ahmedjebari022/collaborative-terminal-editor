@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
+	
 )
 
 //creating a file in a specific path
@@ -67,3 +69,63 @@ func getParentFolder(dir string)(string, error){
 	parentDir := filepath.Dir(dir)
 	return parentDir,nil
 }
+
+
+
+func readFile(path string)([]string, error){
+	data, err := os.Stat(path)
+	if err != nil {
+		if os.IsNotExist(err){
+			return nil, fmt.Errorf("file doesn't exist: %s",err.Error())
+		}
+			return nil, fmt.Errorf("error while opening the file: %s",err.Error())
+	}
+	if data.IsDir(){
+		return nil, fmt.Errorf("this is a directory please select a file")
+	}
+	file, err := os.Open(path)		
+	if err != nil {
+		return nil, fmt.Errorf("can't open the file : %s",err.Error())
+	}
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	fileContent := []string{}
+	for scanner.Scan() {
+		fileContent = append(fileContent, scanner.Text())
+	}
+	if err := scanner.Err() ; err != nil {
+			return nil, fmt.Errorf("error while reading the line: %s", err.Error())
+		}
+
+	return fileContent, nil
+}
+
+func updateFile (path string, content []string)error{
+		data, err := os.Stat(path)
+		if err != nil {
+			if os.IsNotExist(err){
+				return fmt.Errorf("file doesn't exist: %v",err)
+			}
+			return fmt.Errorf("error when looking for file: %v",err)
+		}
+		if data.IsDir(){
+			return fmt.Errorf("this is a directory file needed for this operation")
+		}
+		file, err := os.Create(path)
+		if err != nil {
+			return fmt.Errorf("error when opening the file :%v",err)
+		}
+		defer file.Close()
+		scanner := bufio.NewWriter(file)
+		for i, l := range content{
+			_, err := scanner.WriteString(l + "\n")
+			if err != nil {
+				scanner.Flush()
+				return fmt.Errorf("error while writing to file at line %d: %v",i, err)
+			}
+		}
+		scanner.Flush()
+		return nil
+	}
+
+

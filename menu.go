@@ -11,6 +11,9 @@ type NavigateToCreateFileMsg struct{}
 type NavigateToEditFileMsg struct{}
 type NavigateToHelpMsg struct{}
 type NavigateBack struct{}
+type NavigateToOpenFile struct{
+    filePath string
+}
 
 var (
 	primaryColor   = lipgloss.Color("#FF6AD5")  // Hot pink
