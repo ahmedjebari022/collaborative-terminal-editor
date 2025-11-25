@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/charmbracelet/bubbles/filepicker"
 	tea "github.com/charmbracelet/bubbletea"
@@ -17,11 +18,10 @@ type editFileModel struct{
 }
 
 func initEditFileModel()tea.Model{
-	// home, _ := os.UserHomeDir()
-	// path := filepath.Join(home, "Workspace/github/ahmedjebari022/collaborative-terminal-editor")	
+	home, _ := os.UserHomeDir()
+	path := filepath.Join(home, "Workspace/github/ahmedjebari022/collaborative-terminal-editor")	
 	fp :=  filepicker.New()
-	fp.CurrentDirectory, _ = os.UserHomeDir()
-
+	fp.CurrentDirectory = path
 	
 	fp.AllowedTypes = nil
 	return editFileModel{
