@@ -85,26 +85,29 @@ func (m mainMenuModel)Init()tea.Cmd{
 }
 
 func (m mainMenuModel)Update(msg tea.Msg)(tea.Model,tea.Cmd){
-	switch msg := msg.(type){
-		case tea.KeyMsg :
-			switch msg.String(){
-				case "q", "ctrl+c":
-					return m, tea.Quit
-				case "up", "k":
-					if m.cursor > 0{
-						m.cursor --
-					}
-				case "down", "j":
-					if m.cursor < len(m.choices)-1{
-						m.cursor ++
-					}
-				case "enter", " ":
-					return m,func() tea.Msg{
-						return m.choices[m.cursor].msg
-					}
-			}	
-	}
-	return m,nil
+    switch msg := msg.(type){
+        case tea.WindowSizeMsg:
+            m.windowWidth = msg.Width
+            m.windowHeight = msg.Height
+        case tea.KeyMsg :
+            switch msg.String(){
+                case "q", "ctrl+c":
+                    return m, tea.Quit
+                case "up", "k":
+                    if m.cursor > 0{
+                        m.cursor --
+                    }
+                case "down", "j":
+                    if m.cursor < len(m.choices)-1{
+                        m.cursor ++
+                    }
+                case "enter", " ":
+                    return m,func() tea.Msg{
+                        return m.choices[m.cursor].msg
+                    }
+            }	
+    }
+    return m,nil
 }
 
 func (m mainMenuModel)View()string{
